@@ -37,15 +37,20 @@ app.get("/api/alumno", async (req, res) => {
 
   // Lanzar una query
 
-  let selectStmt = "SELECT * FROM magas";
+  let selectStmt = "SELECT * FROM alumno";
   const values = [];
 
   if (req.query.incluir_estudio === "true") {
     selectStmt = `SELECT m.*, v.nombre_de_estudio nombre_de_estudio
     FROM evaluacion.alumno m
-    JOIN evaluacion.estudio_admitido v ON (m.idalumno=v.idestudio);`;
+    JOIN evaluacion.estudio_admitido v ON (m.idalumno=v.idestudio)`;
+  }
+  if (req.query.search) {
+    selectStmt += " WHERE nombre LIKE ?";
+    values.push(`%${req.query.search}%`);
   }
 
+  console.log("lanzando:", selectStmt, values);
   const [results] = await conn.query(selectStmt, values);
   // Devolvemos los resultados como JSON
 
@@ -118,7 +123,7 @@ app.put("/api/alumno/:id", async (req, res) => {
 
   const [results] = await conn.execute(
     `
-      UPDATE magas
+      UPDATE alumno
       SET nombre=?, apellidos=?, nombre_de_estudio=?, 
       WHERE id=?
       `,
