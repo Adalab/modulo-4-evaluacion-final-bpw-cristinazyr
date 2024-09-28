@@ -85,9 +85,9 @@ app.post("/api/alumno", async (req, res) => {
   // Insert
   const [results] = await conn.execute(
     `
-    INSERT alumno (nombre, apellidos, nombre_de_estudio)
-    VALUES (?,?,?);`,
-    [req.body.nombre, req.body.apellidos, req.body.nombre_de_estudio]
+    INSERT alumno (nombre, apellidos)
+    VALUES (?,?);`,
+    [req.body.nombre, req.body.apellidos]
   );
 
   console.log(results);
@@ -106,7 +106,7 @@ app.post("/api/alumno", async (req, res) => {
 
 // PUT    /api/alumno/1  <-- body={}  --> { success: true } ó { success: false, error: 'No hay nombre' }
 
-app.put("/api/alumno/:id", async (req, res) => {
+app.put("/api/alumno/:idalumno", async (req, res) => {
   console.log(req.params, req.body);
 
   // Obtener una conn
@@ -124,15 +124,10 @@ app.put("/api/alumno/:id", async (req, res) => {
   const [results] = await conn.execute(
     `
       UPDATE alumno
-      SET nombre=?, apellidos=?, nombre_de_estudio=?, 
-      WHERE id=?
+      SET nombre=?, apellidos=?,
+      WHERE idalumno=?
       `,
-    [
-      req.body.nombre,
-      req.body.apellidos,
-      req.body.nombre_de_estudio,
-      req.params.id,
-    ]
+    [req.body.nombre, req.body.apellidos, req.params.idalumno]
   );
 
   // Devuelvo un json, success:true, success:false
@@ -151,7 +146,7 @@ app.put("/api/alumno/:id", async (req, res) => {
 
 // DELETE /api/alumno/1               --> { success: true } ó { success: false, error: 'No hay nombre' }
 
-app.delete("/api/alumno/:id", async (req, res) => {
+app.delete("/api/alumno/:idalumno", async (req, res) => {
   // Obtener una conn
 
   const conn = await getConnection();
@@ -167,8 +162,8 @@ app.delete("/api/alumno/:id", async (req, res) => {
   const [results] = await conn.execute(
     `
       DELETE FROM alumno
-      WHERE id = ?`,
-    [req.params.id]
+      WHERE idalumno = ?`,
+    [req.params.idalumno]
   );
 
   // Devuelvo un json, success:true, success:false
